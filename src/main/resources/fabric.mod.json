@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "id": "botpanel",
+  "version": "1.0.0",
+  "name": "Bot Panel",
+  "description": "Panel bota (klawisz X): nazwa, wejscie na serwer, widoczna konsola czatu.",
+  "environment": "client",
+  "entrypoints": { "client": ["pl.botpanel.BotPanelMod"] },
+  "depends": {
+    "fabricloader": ">=0.18.1",
+    "minecraft": "~1.21.11",
+    "java": ">=21",
+    "fabric-api": "*"
+  }
+}
