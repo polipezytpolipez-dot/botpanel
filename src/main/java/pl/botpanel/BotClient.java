@@ -3,12 +3,13 @@ package pl.botpanel;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.TranslatableComponent;
+import org.geysermc.mcprotocollib.network.ClientSession;
 import org.geysermc.mcprotocollib.network.Session;
 import org.geysermc.mcprotocollib.network.event.session.ConnectedEvent;
 import org.geysermc.mcprotocollib.network.event.session.DisconnectedEvent;
 import org.geysermc.mcprotocollib.network.event.session.SessionAdapter;
+import org.geysermc.mcprotocollib.network.factory.ClientNetworkSessionFactory;
 import org.geysermc.mcprotocollib.network.packet.Packet;
-import org.geysermc.mcprotocollib.network.tcp.TcpClientSession;
 import org.geysermc.mcprotocollib.protocol.MinecraftProtocol;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.ClientboundLoginPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.ClientboundPlayerChatPacket;
@@ -17,6 +18,7 @@ import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.Serverbound
 import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.ServerboundChatPacket;
 
 import java.lang.reflect.Constructor;
+import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
@@ -44,7 +46,10 @@ public class BotClient {
         new Thread(() -> {
             try {
                 MinecraftProtocol protocol = new MinecraftProtocol(botName); // tryb offline
-                Session s = new TcpClientSession(host, port, protocol);
+                ClientSession s = ClientNetworkSessionFactory.factory()
+                        .setRemoteSocketAddress(new InetSocketAddress(host, port))
+                        .setProtocol(protocol)
+                        .create();
                 s.addListener(new SessionAdapter() {
                     @Override public void connected(ConnectedEvent e) { add("[Bot] Polaczono."); }
 
@@ -72,7 +77,7 @@ public class BotClient {
 
     public static void leave() {
         if (session != null) {
-            session.disconnect("bye");
+            session.disconnect(Component.text("bye"));
             session = null;
         }
     }
